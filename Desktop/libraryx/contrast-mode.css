@@ -1,0 +1,72 @@
+body.contrast-mode {
+  background: #000 !important;
+  color: #fff !important;
+}
+.contrast-mode .container,
+.contrast-mode .nav-bar,
+.contrast-mode .book-card,
+.contrast-mode .stat-card,
+.contrast-mode .chart-container,
+.contrast-mode .activity-list,
+.contrast-mode .borrowers-list {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+.contrast-mode .nav-bar h1,
+.contrast-mode .nav-links a {
+  color: #fff !important;
+}
+.contrast-mode .nav-links a.active,
+.contrast-mode .nav-links a:hover {
+  background: #ff0 !important;
+  color: #000 !important;
+}
+.contrast-mode .stat-card,
+.contrast-mode .book-card {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #ff0 !important;
+}
+.contrast-mode .stat-card h3,
+.contrast-mode .stat-card .number {
+  color: #ff0 !important;
+}
+.contrast-mode .btn,
+.contrast-mode button,
+.contrast-mode input[type="submit"] {
+  background: #ff0 !important;
+  color: #000 !important;
+  border: 2px solid #fff !important;
+  font-weight: bold;
+}
+.contrast-mode .btn:hover,
+.contrast-mode button:hover {
+  background: #fff !important;
+  color: #000 !important;
+}
+.contrast-mode input,
+.contrast-mode select,
+.contrast-mode textarea {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #ff0 !important;
+}
+.contrast-mode .alert {
+  background: #ff0 !important;
+  color: #000 !important;
+  border: 2px solid #fff !important;
+}
+.contrast-mode .book-tag-label {
+  background: #ff0 !important;
+  color: #000 !important;
+  border: 1px solid #fff !important;
+}
+.contrast-mode a {
+  color: #ff0 !important;
+  text-decoration: underline;
+}
+.contrast-mode a:focus, .contrast-mode button:focus, .contrast-mode input:focus, .contrast-mode select:focus {
+  outline: 3px solid #ff0 !important;
+  outline-offset: 2px;
+} 

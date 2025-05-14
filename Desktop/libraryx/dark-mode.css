@@ -1,0 +1,120 @@
+/* Dark mode styles */
+[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --border-color: #404040;
+    --card-bg: #2d2d2d;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --nav-bg: #2d2d2d;
+    --hover-bg: #404040;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+    --link-color: #64b5f6;
+    --link-hover: #90caf9;
+}
+
+[data-theme="dark"] body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .nav-bar {
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .nav-bar h1 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .nav-links a {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .nav-links a.active {
+    color: var(--text-primary);
+    background: var(--hover-bg);
+}
+
+[data-theme="dark"] .book-card {
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+}
+
+[data-theme="dark"] .book-card h3 a {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .book-card h3 a:hover {
+    color: var(--link-hover);
+}
+
+[data-theme="dark"] .author {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .category {
+    color: var(--link-color);
+}
+
+[data-theme="dark"] .isbn {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .search-section {
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+}
+
+[data-theme="dark"] .search-form input[type="text"],
+[data-theme="dark"] .search-form select {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .book-card.borrowed {
+    background: var(--card-bg);
+}
+
+[data-theme="dark"] .book-card.borrowed.overdue {
+    background: #3d1f1f;
+    border-left-color: var(--error-color);
+}
+
+[data-theme="dark"] .book-tag-label {
+    background: #424242;
+    color: var(--text-primary);
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: var(--card-shadow);
+}
+
+.theme-toggle:hover {
+    background: var(--hover-bg);
+}
+
+.theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-primary);
+} 

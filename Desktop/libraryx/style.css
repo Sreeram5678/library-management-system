@@ -1,0 +1,351 @@
+/* Modern CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Navigation */
+.nav-bar {
+    background-color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-bar h1 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #3498db;
+    background-color: #f8f9fa;
+}
+
+.nav-links a.active {
+    color: #3498db;
+    background-color: #ebf5ff;
+}
+
+/* Main Content */
+main {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Search Section */
+.search-section {
+    margin-bottom: 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-form input[type="text"],
+.search-form select {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-form select {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.search-btn {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.search-btn:hover {
+    background-color: #2980b9;
+}
+
+.borrow-btn {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.borrow-btn:hover {
+    background-color: #27ae60;
+}
+
+.wishlist-btn {
+    background-color: #f1c40f;
+    color: #fff;
+}
+
+.wishlist-btn:hover {
+    background-color: #f39c12;
+}
+
+.remove-btn {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.remove-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Book Grid */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.book-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-info h3 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.book-info p {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.book-info .author {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.book-info .category {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.book-info .isbn {
+    color: #95a5a6;
+    font-size: 0.9rem;
+}
+
+/* Status Indicators */
+.status {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.status.available {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status.borrowed {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* Book Actions */
+.book-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.borrow-form,
+.wishlist-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.borrow-form input[type="text"] {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* History List */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-item {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.history-item .book-info {
+    flex: 1;
+}
+
+.history-item .borrow-info {
+    flex: 1;
+    text-align: right;
+}
+
+/* Wishlist Grid */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Alerts */
+.alert {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 9999;
+    min-width: 260px;
+    max-width: 350px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    opacity: 1;
+    transition: opacity 0.4s, transform 0.4s;
+    animation: fadeInAlert 0.5s;
+}
+@keyframes fadeInAlert {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* No Books Message */
+.no-books {
+    text-align: center;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-bar {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-form input[type="text"],
+    .search-form select,
+    .search-form button {
+        width: 100%;
+    }
+
+    .history-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .history-item .borrow-info {
+        text-align: left;
+    }
+} 
