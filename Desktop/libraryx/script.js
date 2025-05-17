@@ -100,10 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Return book functionality
     const returnBtns = document.querySelectorAll('.return-btn');
+    console.log('Found return buttons:', returnBtns.length);
     returnBtns.forEach(btn => {
+        console.log('Return button data:', btn.dataset);
         btn.addEventListener('click', async () => {
+            console.log('Return button clicked for book:', btn.dataset.bookId);
             if (confirm('Are you sure you want to return this book?')) {
                 try {
+                    console.log('Sending return request...');
                     const response = await fetch('return.php', {
                         method: 'POST',
                         headers: {
@@ -114,29 +118,36 @@ document.addEventListener('DOMContentLoaded', function() {
                         })
                     });
 
+                    console.log('Response received:', response);
                     const data = await response.json();
+                    console.log('Response data:', data);
+                    
                     if (data.success) {
-                        if (data.popup_message) {
-                            showCustomPopup(data.popup_message);
-                        } else {
-                            alert('Book returned successfully!');
+                        let message = 'Book returned successfully!';
+                        
+                        // Add notification message if there are users to notify
+                        if (data.data.notified_users && data.data.notified_users.length > 0) {
+                            const userNames = data.data.notified_users.map(user => user.name).join(', ');
+                            message += `\n\nThe following users will be notified that this book is now available: ${userNames}`;
                         }
-                        location.reload();
+                        
+                        showCustomPopup(message);
+                        setTimeout(() => location.reload(), 1000);
                     } else {
-                        alert(data.message || 'Error returning book');
+                        showCustomPopup(data.message || 'Error returning book', 'error');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error returning book');
+                    showCustomPopup('Error returning book. Please try again.', 'error');
                 }
             }
         });
     });
 
     // Custom popup for notifications
-    function showCustomPopup(message) {
+    function showCustomPopup(message, type = 'success') {
         const popup = document.createElement('div');
-        popup.className = 'alert success';
+        popup.className = `alert ${type}`;
         popup.style.position = 'fixed';
         popup.style.bottom = '32px';
         popup.style.right = '32px';
@@ -146,16 +157,43 @@ document.addEventListener('DOMContentLoaded', function() {
         popup.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
         popup.style.opacity = '1';
         popup.style.transition = 'opacity 0.4s, transform 0.4s';
-        popup.style.background = '#e8f5e9';
-        popup.style.color = '#2e7d32';
+        popup.style.background = type === 'success' ? '#e8f5e9' : '#ffebee';
+        popup.style.color = type === 'success' ? '#2e7d32' : '#c62828';
         popup.style.fontWeight = '500';
         popup.style.padding = '1rem';
         popup.style.borderRadius = '4px';
+        popup.style.whiteSpace = 'pre-line';
         popup.innerText = message;
         document.body.appendChild(popup);
         setTimeout(() => {
             popup.style.opacity = '0';
             setTimeout(() => popup.remove(), 600);
         }, 5000);
+    }
+
+    // DARK MODE TOGGLE (GLOBAL)
+    const darkToggle = document.getElementById('nav-dark-toggle');
+    const darkIcon = document.getElementById('nav-dark-icon');
+    function setDarkMode(isDark) {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            if (darkIcon) darkIcon.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z' /></svg>`;
+        } else {
+            document.documentElement.classList.remove('dark');
+            if (darkIcon) darkIcon.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z' /></svg>`;
+        }
+    }
+    if (darkToggle) {
+        darkToggle.addEventListener('click', function() {
+            const isDark = !document.documentElement.classList.contains('dark');
+            setDarkMode(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+    // On load, set theme from localStorage
+    if (localStorage.getItem('theme') === 'dark') {
+        setDarkMode(true);
+    } else {
+        setDarkMode(false);
     }
 }); 

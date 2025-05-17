@@ -134,7 +134,6 @@ $most_wishlisted_book = $conn->query("SELECT b.title, COUNT(w.id) as cnt FROM bo
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Statistics - LibraryX</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dark-mode.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .stats-grid {
@@ -251,36 +250,6 @@ $most_wishlisted_book = $conn->query("SELECT b.title, COUNT(w.id) as cnt FROM bo
         .borrower-stats .overdue {
             color: #c62828;
         }
-        [data-theme="dark"] .stat-card,
-        [data-theme="dark"] .chart-container,
-        [data-theme="dark"] .activity-list,
-        [data-theme="dark"] .borrowers-list {
-            background: var(--card-bg);
-        }
-        [data-theme="dark"] .stat-card h3 {
-            color: var(--text-secondary);
-        }
-        [data-theme="dark"] .stat-card .number {
-            color: var(--text-primary);
-        }
-        [data-theme="dark"] .activity-item {
-            border-bottom-color: var(--border-color);
-        }
-        [data-theme="dark"] .activity-item .title {
-            color: var(--text-primary);
-        }
-        [data-theme="dark"] .activity-item .meta {
-            color: var(--text-secondary);
-        }
-        [data-theme="dark"] .borrower-item {
-            border-bottom-color: var(--border-color);
-        }
-        [data-theme="dark"] .borrower-name {
-            color: var(--text-primary);
-        }
-        [data-theme="dark"] .borrower-stats {
-            color: var(--text-secondary);
-        }
         .stat-card.total {
             background: #3498db;
             color: #fff;
@@ -352,6 +321,7 @@ $most_wishlisted_book = $conn->query("SELECT b.title, COUNT(w.id) as cnt FROM bo
                 <a href="wishlist.php">Wishlist</a>
                 <a href="stats.php" class="active">Statistics</a>
             </div>
+            <button id="nav-dark-toggle" class="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-[#4f46e5] hover:text-white dark:hover:bg-[#4f46e5] transition" aria-label="Toggle dark mode"><span id="nav-dark-icon"></span></button>
         </nav>
 
         <main>
@@ -426,198 +396,5 @@ $most_wishlisted_book = $conn->query("SELECT b.title, COUNT(w.id) as cnt FROM bo
     </div>
 
     <script src="script.js"></script>
-    <script src="dark-mode.js"></script>
-    <script>
-        // Monthly Trends Chart
-        const monthlyCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
-        new Chart(monthlyCtx, {
-            type: 'line',
-            data: {
-                labels: [<?php 
-                    $months = [];
-                    $borrows = [];
-                    $returns = [];
-                    while($trend = $monthly_trends->fetch_assoc()) {
-                        $months[] = "'" . date('M Y', strtotime($trend['month'] . '-01')) . "'";
-                        $borrows[] = $trend['borrow_count'];
-                        $returns[] = $trend['return_count'];
-                    }
-                    echo implode(',', $months);
-                ?>],
-                datasets: [{
-                    label: 'Books Borrowed',
-                    data: [<?php echo implode(',', $borrows); ?>],
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }, {
-                    label: 'Books Returned',
-                    data: [<?php echo implode(',', $returns); ?>],
-                    borderColor: '#2ecc71',
-                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Monthly Borrowing Trends'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-
-        // Category Chart
-        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-        new Chart(categoryCtx, {
-            type: 'bar',
-            data: {
-                labels: [<?php 
-                    $labels = [];
-                    $data = [];
-                    while($cat = $popular_categories->fetch_assoc()) {
-                        $labels[] = "'" . addslashes($cat['name']) . "'";
-                        $data[] = $cat['count'];
-                    }
-                    echo implode(',', $labels);
-                ?>],
-                datasets: [{
-                    label: 'Books per Category',
-                    data: [<?php echo implode(',', $data); ?>],
-                    backgroundColor: '#3498db',
-                    borderColor: '#2980b9',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Popular Categories'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-
-        // Tag Chart
-        const tagCtx = document.getElementById('tagChart').getContext('2d');
-        new Chart(tagCtx, {
-            type: 'pie',
-            data: {
-                labels: [<?php 
-                    $labels = [];
-                    $data = [];
-                    while($tag = $popular_tags->fetch_assoc()) {
-                        $labels[] = "'" . addslashes($tag['name']) . "'";
-                        $data[] = $tag['count'];
-                    }
-                    echo implode(',', $labels);
-                ?>],
-                datasets: [{
-                    data: [<?php echo implode(',', $data); ?>],
-                    backgroundColor: [
-                        '#3498db',
-                        '#2ecc71',
-                        '#e74c3c',
-                        '#f1c40f',
-                        '#9b59b6'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Popular Tags'
-                    }
-                }
-            }
-        });
-
-        // Category Distribution Over Time (Stacked Bar)
-        const catDistCtx = document.getElementById('categoryDistChart').getContext('2d');
-        new Chart(catDistCtx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode(array_map(function($m){return date('M Y', strtotime($m.'-01'));}, $cat_months)); ?>,
-                datasets: [
-                    <?php foreach($cat_names as $i => $cat): ?>{
-                        label: '<?php echo addslashes($cat); ?>',
-                        data: [
-                            <?php foreach($cat_months as $month): ?>
-                                <?php echo isset($cat_data[$cat][$month]) ? $cat_data[$cat][$month] : 0; ?>,
-                            <?php endforeach; ?>
-                        ],
-                        backgroundColor: '<?php echo ["#3498db","#2ecc71","#e74c3c","#f1c40f","#9b59b6","#16a085","#e67e22","#34495e"][($i)%8]; ?>',
-                        stack: 'Stack 0'
-                    },<?php endforeach; ?>
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Category Distribution Over Time'
-                    },
-                },
-                scales: {
-                    x: { stacked: true },
-                    y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } }
-                }
-            }
-        });
-
-        // Active Users Over Time
-        const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
-        new Chart(activeUsersCtx, {
-            type: 'line',
-            data: {
-                labels: <?php echo json_encode($active_months); ?>,
-                datasets: [{
-                    label: 'Active Users',
-                    data: <?php echo json_encode($active_counts); ?>,
-                    borderColor: '#8e44ad',
-                    backgroundColor: 'rgba(142,68,173,0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Active Users Over Time'
-                    }
-                },
-                scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                }
-            }
-        });
-    </script>
 </body>
 </html> 

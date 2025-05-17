@@ -1,11 +1,18 @@
 <?php
 require_once 'config.php';
 
+header('Content-Type: application/json');
+
 // Get JSON data from request
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($data['book_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Missing book ID']);
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Missing book ID',
+        'error' => 'validation_error'
+    ]);
     exit;
 }
 
@@ -16,7 +23,7 @@ $conn->begin_transaction();
 
 try {
     // Check if book is borrowed
-    $stmt = $conn->prepare("SELECT status FROM books WHERE id = ?");
+    $stmt = $conn->prepare("SELECT b.status, b.title, bb.borrower_name FROM books b LEFT JOIN borrowed_books bb ON b.id = bb.book_id AND bb.return_date IS NULL WHERE b.id = ?");
     $stmt->bind_param("i", $book_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -48,24 +55,37 @@ try {
     $notif_stmt->bind_param("i", $book_id);
     $notif_stmt->execute();
     $notif_result = $notif_stmt->get_result();
-    $notified_names = [];
+    $notified_users = [];
     while ($notif = $notif_result->fetch_assoc()) {
-        $notified_names[] = $notif['name'];
+        $notified_users[] = [
+            'name' => $notif['name'],
+            'email' => $notif['email']
+        ];
     }
+
     // Mark notifications as notified
     $update_stmt = $conn->prepare("UPDATE notifications SET notified = 1 WHERE book_id = ? AND notified = 0");
     $update_stmt->bind_param("i", $book_id);
     $update_stmt->execute();
 
-    $popup_message = '';
-    if (!empty($notified_names)) {
-        $popup_message = 'The following users will be notified that this book is now available: ' . implode(', ', $notified_names);
-    }
-
-    echo json_encode(['success' => true, 'popup_message' => $popup_message]);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Book returned successfully',
+        'data' => [
+            'book_title' => $book['title'],
+            'returned_by' => $book['borrower_name'],
+            'return_date' => date('Y-m-d H:i:s'),
+            'notified_users' => $notified_users
+        ]
+    ]);
 } catch (Exception $e) {
     // Rollback transaction on error
     $conn->rollback();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'error' => 'return_error'
+    ]);
 }
 ?> 

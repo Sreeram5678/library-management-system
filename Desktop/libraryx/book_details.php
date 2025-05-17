@@ -56,127 +56,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reviewer_name'], $_PO
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['title']); ?> - Details</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .book-details-container {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-        }
-        .book-meta {
-            flex: 1;
-        }
-        .section {
-            background: #fafbfc;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        }
-        .reviews-list, .history-section ul, .recommendations-section ul {
-            margin-top: 1rem;
-        }
-        .review-item {
-            border-bottom: 1px solid #eee;
-            padding: 0.7rem 0;
-        }
-        .review-item:last-child {
-            border-bottom: none;
-        }
-        .rating {
-            color: #f39c12;
-            font-weight: bold;
-            margin-left: 0.5rem;
-        }
-        .review-date {
-            color: #888;
-            font-size: 0.95em;
-            margin-left: 1rem;
-        }
-        .review-form {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        .review-form input, .review-form select, .review-form textarea {
-            padding: 0.5rem;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            font-size: 1rem;
-        }
-        .review-form textarea {
-            flex: 2;
-            min-width: 180px;
-            min-height: 40px;
-        }
-        .review-form button {
-            background: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 0.5rem 1.2rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .review-form button:hover {
-            background: #217dbb;
-        }
-        .recommendations-section ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .recommendations-section li {
-            margin-bottom: 0.7rem;
-        }
-        .recommendation-title {
-            color: #222;
-            font-weight: 700;
-            font-size: 1.08rem;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .recommendation-title:hover {
-            color: #1976d2;
-            text-decoration: underline;
-        }
-        .recommendation-author {
-            color: #555;
-            font-style: italic;
-            font-size: 1rem;
-            margin-left: 0.3rem;
-        }
+      body {
+        background: linear-gradient(120deg, #e0e7ff 0%, #ffffff 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .floating-shape {
+        position: absolute;
+        z-index: 0;
+        opacity: 0.10;
+        filter: blur(12px);
+        pointer-events: none;
+      }
+      .floating-shape1 { top: 5%; left: 10%; width: 220px; height: 220px; background: #4f46e5; border-radius: 50%; }
+      .floating-shape2 { bottom: 10%; right: 8%; width: 180px; height: 180px; background: #0ea5e9; border-radius: 50%; }
+      .floating-shape3 { top: 60%; left: 60%; width: 120px; height: 120px; background: #a5b4fc; border-radius: 50%; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <nav class="nav-bar">
-            <h1>LibraryX</h1>
-            <div class="nav-links">
-                <a href="index.php">Home</a>
-                <a href="borrowed.php">Borrowed Books</a>
-                <a href="history.php">Borrowing History</a>
-                <a href="wishlist.php">Wishlist</a>
+<body class="relative font-sans min-h-screen transition-colors duration-300">
+    <div class="floating-shape floating-shape1"></div>
+    <div class="floating-shape floating-shape2"></div>
+    <div class="floating-shape floating-shape3"></div>
+    <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
+        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
+            <div class="flex items-center gap-4">
+                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
+                <div>
+                  <h1 class="text-3xl font-extrabold text-[#4f46e5] tracking-tight font-poppins">LibraryX</h1>
+                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="index.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Home</a>
+                <a href="borrowed.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowed Books</a>
+                <a href="history.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowing History</a>
+                <a href="wishlist.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Wishlist</a>
+                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
             </div>
         </nav>
         <main>
-            <div class="book-details-container section">
-                <div class="book-meta">
-                    <h2><?php echo htmlspecialchars($book['title']); ?></h2>
-                    <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
-                    <p><strong>Category:</strong> <?php echo htmlspecialchars($book['category']); ?></p>
-                    <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p>
-                    <p><strong>Description:</strong> <?php echo htmlspecialchars($book['description']); ?></p>
-                    <p><strong>Status:</strong> <span class="status <?php echo $book['status']; ?>"><?php echo ucfirst($book['status']); ?></span></p>
+            <div class="bg-white rounded-2xl shadow-2xl p-8 flex flex-col md:flex-row gap-8 mb-8">
+                <div class="flex-1">
+                    <h2 class="text-2xl md:text-3xl font-bold text-[#1f2937] mb-2 font-poppins"><?php echo htmlspecialchars($book['title']); ?></h2>
+                    <p class="text-[#6b7280] mb-1"><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
+                    <p class="text-[#6b7280] mb-1"><strong>Category:</strong> <?php echo htmlspecialchars($book['category']); ?></p>
+                    <p class="text-[#6b7280] mb-1"><strong>ISBN:</strong> <?php echo !empty($book['isbn']) ? htmlspecialchars($book['isbn']) : 'N/A'; ?></p>
+                    <p class="text-[#6b7280] mb-1"><strong>Description:</strong> <?php echo htmlspecialchars($book['description']); ?></p>
+                    <p class="text-[#6b7280] mb-1"><strong>Status:</strong> <span class="inline-block bg-[#10b981]/10 text-[#10b981] rounded-full px-4 py-1 text-sm font-semibold"><?php echo ucfirst($book['status']); ?></span></p>
                 </div>
             </div>
-            <div class="reviews-section section">
-                <h3>Reviews & Ratings</h3>
-                <form method="post" class="review-form">
-                    <input type="text" name="reviewer_name" placeholder="Your Name" required>
-                    <select name="rating" required>
+            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+                <h3 class="text-xl font-bold text-[#1f2937] mb-4">Reviews & Ratings</h3>
+                <!-- Sentiment Legend -->
+                <div class="mb-2 flex items-center gap-4 text-xs text-[#6b7280]">
+                  <span><span class="mr-1">😊</span>Positive</span>
+                  <span><span class="mr-1">😐</span>Neutral</span>
+                  <span><span class="mr-1">😞</span>Negative</span>
+                </div>
+                <form method="post" class="flex flex-col md:flex-row gap-4 mb-6">
+                    <input type="text" name="reviewer_name" placeholder="Your Name" required class="px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-base focus:ring-2 focus:ring-[#4f46e5] outline-none transition" />
+                    <select name="rating" required class="px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-base focus:ring-2 focus:ring-[#4f46e5] outline-none transition">
                         <option value="">Rating</option>
                         <option value="5">5 - Excellent</option>
                         <option value="4">4 - Good</option>
@@ -184,57 +128,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reviewer_name'], $_PO
                         <option value="2">2 - Poor</option>
                         <option value="1">1 - Terrible</option>
                     </select>
-                    <textarea name="review" placeholder="Write your review..." required></textarea>
-                    <button type="submit" class="btn">Submit Review</button>
+                    <textarea name="review" placeholder="Write your review..." required class="flex-1 px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-base focus:ring-2 focus:ring-[#4f46e5] outline-none transition"></textarea>
+                    <button type="submit" class="px-6 py-2 rounded-lg bg-[#4f46e5] text-white font-bold shadow-lg hover:bg-[#0ea5e9] transition">Submit Review</button>
                 </form>
                 <?php if ($reviews->num_rows > 0): ?>
-                    <div class="reviews-list">
+                    <div class="space-y-6">
                         <?php while($r = $reviews->fetch_assoc()): ?>
-                            <div class="review-item">
-                                <strong><?php echo htmlspecialchars($r['reviewer_name']); ?></strong>
-                                <span class="rating">Rating: <?php echo $r['rating']; ?>/5</span>
-                                <p><?php echo nl2br(htmlspecialchars($r['review'])); ?></p>
-                                <span class="review-date"><?php echo date('F j, Y', strtotime($r['review_date'])); ?></span>
+                            <div class="bg-[#f3f4f6] rounded-lg p-4 shadow flex flex-col gap-1">
+                                <div class="flex items-center gap-2">
+                                    <strong class="text-[#1f2937]"><?php echo htmlspecialchars($r['reviewer_name']); ?></strong>
+                                    <span class="text-[#f59e42] font-bold">Rating: <?php echo $r['rating']; ?>/5</span>
+                                    <span class="text-[#6b7280] text-xs ml-2"><?php echo date('F j, Y', strtotime($r['review_date'])); ?></span>
+                                    <?php
+                                    $sentiment_emoji = [
+                                        'positive' => '😊',
+                                        'neutral' => '😐',
+                                        'negative' => '😞'
+                                    ];
+                                    ?>
+                                    <?php if (!empty($r['sentiment'])): ?>
+                                        <span class="ml-2 text-xs font-bold">
+                                            <?php echo $sentiment_emoji[$r['sentiment']] ?? ''; ?> <?php echo ucfirst($r['sentiment']); ?> 
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="text-[#1f2937] mt-1"><?php echo nl2br(htmlspecialchars($r['review'])); ?></p>
                             </div>
                         <?php endwhile; ?>
                     </div>
                 <?php else: ?>
-                    <p>No reviews yet.</p>
+                    <div class="flex flex-col items-center justify-center py-8">
+                      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="40" width="30" height="70" rx="6" fill="#4f46e5"/>
+                        <rect x="50" y="30" width="30" height="80" rx="6" fill="#0ea5e9"/>
+                        <rect x="80" y="50" width="30" height="60" rx="6" fill="#a5b4fc"/>
+                        <rect x="35" y="60" width="70" height="10" rx="3" fill="#10b981"/>
+                        <rect x="35" y="80" width="70" height="10" rx="3" fill="#6b7280"/>
+                        <rect x="35" y="100" width="70" height="10" rx="3" fill="#e0e7ff"/>
+                        <rect x="35" y="120" width="70" height="6" rx="3" fill="#1f2937"/>
+                      </svg>
+                      <p class="mt-6 text-lg text-[#6b7280]">No reviews yet. Be the first to review this book!</p>
+                    </div>
                 <?php endif; ?>
             </div>
-            <div class="history-section section">
-                <h3>Borrowing History</h3>
+            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+                <h3 class="text-xl font-bold text-[#1f2937] mb-4">Borrowing History</h3>
                 <?php if ($history->num_rows > 0): ?>
-                    <ul>
+                    <ul class="divide-y divide-[#e0e7ff]">
                         <?php while($h = $history->fetch_assoc()): ?>
-                            <li>
-                                <strong><?php echo htmlspecialchars($h['borrower_name']); ?></strong> borrowed on <?php echo date('F j, Y', strtotime($h['borrow_date'])); ?>
-                                <?php if ($h['return_date']): ?>, returned on <?php echo date('F j, Y', strtotime($h['return_date'])); ?><?php endif; ?>
+                            <li class="py-3 flex flex-col md:flex-row md:items-center md:gap-4">
+                                <span class="text-[#1f2937] font-semibold"><?php echo htmlspecialchars($h['borrower_name']); ?></span>
+                                <span class="text-[#6b7280]">Borrowed on <?php echo date('F j, Y', strtotime($h['borrow_date'])); ?></span>
+                                <span class="text-[#6b7280]">Due: <?php echo date('F j, Y', strtotime($h['due_date'])); ?></span>
                             </li>
                         <?php endwhile; ?>
                     </ul>
                 <?php else: ?>
-                    <p>No borrowing history for this book.</p>
+                    <div class="flex flex-col items-center justify-center py-8">
+                      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="40" width="30" height="70" rx="6" fill="#4f46e5"/>
+                        <rect x="50" y="30" width="30" height="80" rx="6" fill="#0ea5e9"/>
+                        <rect x="80" y="50" width="30" height="60" rx="6" fill="#a5b4fc"/>
+                        <rect x="35" y="60" width="70" height="10" rx="3" fill="#10b981"/>
+                        <rect x="35" y="80" width="70" height="10" rx="3" fill="#6b7280"/>
+                        <rect x="35" y="100" width="70" height="10" rx="3" fill="#e0e7ff"/>
+                        <rect x="35" y="120" width="70" height="6" rx="3" fill="#1f2937"/>
+                      </svg>
+                      <p class="mt-6 text-lg text-[#6b7280]">No borrowing history for this book.</p>
+                    </div>
                 <?php endif; ?>
             </div>
-            <div class="recommendations-section section">
-                <h3>You might also like</h3>
+            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+                <h3 class="text-xl font-bold text-[#1f2937] mb-4">Recommended Books</h3>
                 <?php if ($recommendations->num_rows > 0): ?>
-                    <ul>
+                    <ul class="divide-y divide-[#e0e7ff]">
                         <?php while($rec = $recommendations->fetch_assoc()): ?>
-                            <li>
-                                <a class="recommendation-title" href="book_details.php?id=<?php echo $rec['id']; ?>">
-                                    <?php echo htmlspecialchars($rec['title']); ?>
-                                </a>
-                                <span class="recommendation-author">by <?php echo htmlspecialchars($rec['author']); ?></span>
+                            <li class="py-3 flex flex-col md:flex-row md:items-center md:gap-4">
+                                <a href="book_details.php?id=<?php echo $rec['id']; ?>" class="text-[#4f46e5] font-semibold hover:underline"><?php echo htmlspecialchars($rec['title']); ?></a>
+                                <span class="text-[#6b7280]">by <?php echo htmlspecialchars($rec['author']); ?></span>
                             </li>
                         <?php endwhile; ?>
                     </ul>
                 <?php else: ?>
-                    <p>No recommendations available.</p>
+                    <div class="flex flex-col items-center justify-center py-8">
+                      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="40" width="30" height="70" rx="6" fill="#4f46e5"/>
+                        <rect x="50" y="30" width="30" height="80" rx="6" fill="#0ea5e9"/>
+                        <rect x="80" y="50" width="30" height="60" rx="6" fill="#a5b4fc"/>
+                        <rect x="35" y="60" width="70" height="10" rx="3" fill="#10b981"/>
+                        <rect x="35" y="80" width="70" height="10" rx="3" fill="#6b7280"/>
+                        <rect x="35" y="100" width="70" height="10" rx="3" fill="#e0e7ff"/>
+                        <rect x="35" y="120" width="70" height="6" rx="3" fill="#1f2937"/>
+                      </svg>
+                      <p class="mt-6 text-lg text-[#6b7280]">No recommendations at this time.</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </main>
     </div>
+    <script src="script.js"></script>
 </body>
 </html> 

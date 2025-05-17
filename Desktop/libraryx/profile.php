@@ -33,82 +33,159 @@ if ($name !== '') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - LibraryX</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .profile-section { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 2rem; }
-        .profile-section h3 { margin-bottom: 1rem; }
-        .profile-form { margin-bottom: 2rem; }
-        .profile-form input { padding: 0.7rem 1.1rem; border-radius: 6px; border: 1px solid #ddd; font-size: 1.08rem; }
-        .profile-form button { background: #3498db; color: #fff; border-radius: 6px; font-weight: 600; font-size: 1.08rem; padding: 0.7rem 2.2rem; border: none; margin-left: 1rem; }
-        .profile-list { margin-top: 1rem; }
-        .profile-list li { margin-bottom: 0.7rem; }
-        .review-item { border-bottom: 1px solid #eee; padding: 0.7rem 0; }
-        .review-item:last-child { border-bottom: none; }
-        .rating { color: #f39c12; font-weight: bold; margin-left: 0.5rem; }
-        .review-date { color: #888; font-size: 0.95em; margin-left: 1rem; }
+      body {
+        background: linear-gradient(120deg, #e0e7ff 0%, #ffffff 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .floating-shape {
+        position: absolute;
+        z-index: 0;
+        opacity: 0.10;
+        filter: blur(12px);
+        pointer-events: none;
+      }
+      .floating-shape1 { top: 5%; left: 10%; width: 220px; height: 220px; background: #4f46e5; border-radius: 50%; }
+      .floating-shape2 { bottom: 10%; right: 8%; width: 180px; height: 180px; background: #0ea5e9; border-radius: 50%; }
+      .floating-shape3 { top: 60%; left: 60%; width: 120px; height: 120px; background: #a5b4fc; border-radius: 50%; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <nav class="nav-bar">
-            <h1>LibraryX</h1>
-            <div class="nav-links">
-                <a href="index.php">Home</a>
-                <a href="borrowed.php">Borrowed Books</a>
-                <a href="history.php">Borrowing History</a>
-                <a href="wishlist.php">Wishlist</a>
-                <a href="profile.php" class="active">Profile</a>
+<body class="relative font-sans min-h-screen transition-colors duration-300">
+    <div class="floating-shape floating-shape1"></div>
+    <div class="floating-shape floating-shape2"></div>
+    <div class="floating-shape floating-shape3"></div>
+    <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
+        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
+            <div class="flex items-center gap-4">
+                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
+                <div>
+                  <h1 class="text-3xl font-extrabold text-[#4f46e5] tracking-tight font-poppins">LibraryX</h1>
+                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="index.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Home</a>
+                <a href="borrowed.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowed Books</a>
+                <a href="history.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowing History</a>
+                <a href="wishlist.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Wishlist</a>
+                <a href="profile.php" class="text-lg font-semibold text-[#4f46e5] border-b-2 border-[#4f46e5] pb-1">Profile</a>
+                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
             </div>
         </nav>
         <main>
-            <form class="profile-form" method="get" action="profile.php">
-                <input type="text" name="name" placeholder="Enter your name" value="<?php echo htmlspecialchars($name); ?>" required>
-                <button type="submit">View Profile</button>
+            <form class="mb-8" method="get" action="profile.php">
+                <div class="flex gap-4 items-center">
+                    <input type="text" name="name" placeholder="Enter your name" value="<?php echo htmlspecialchars($name); ?>" required
+                           class="flex-1 px-6 py-3 rounded-xl border border-gray-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 outline-none transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                    <button type="submit" 
+                            class="px-8 py-3 bg-gradient-to-r from-[#4f46e5] to-[#0ea5e9] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#4f46e5]/20 transition-all duration-300 transform hover:-translate-y-0.5">
+                        View Profile
+                    </button>
+                </div>
             </form>
             <?php if ($name !== ''): ?>
-                <div class="profile-section">
-                    <h3>Borrowing History</h3>
-                    <?php if ($history && $history->num_rows > 0): ?>
-                        <ul class="profile-list">
-                            <?php while($h = $history->fetch_assoc()): ?>
-                                <li><strong><?php echo htmlspecialchars($h['title']); ?></strong> by <?php echo htmlspecialchars($h['author']); ?> (Borrowed: <?php echo date('F j, Y', strtotime($h['borrow_date'])); ?><?php if ($h['return_date']): ?>, Returned: <?php echo date('F j, Y', strtotime($h['return_date'])); ?><?php endif; ?>)</li>
-                            <?php endwhile; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>No borrowing history found.</p>
-                    <?php endif; ?>
-                </div>
-                <div class="profile-section">
-                    <h3>Wishlist</h3>
-                    <?php if ($wishlist && $wishlist->num_rows > 0): ?>
-                        <ul class="profile-list">
-                            <?php while($w = $wishlist->fetch_assoc()): ?>
-                                <li><strong><?php echo htmlspecialchars($w['title']); ?></strong> by <?php echo htmlspecialchars($w['author']); ?></li>
-                            <?php endwhile; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>No wishlist items found.</p>
-                    <?php endif; ?>
-                </div>
-                <div class="profile-section">
-                    <h3>Reviews</h3>
-                    <?php if ($reviews && $reviews->num_rows > 0): ?>
-                        <div class="reviews-list">
-                            <?php while($r = $reviews->fetch_assoc()): ?>
-                                <div class="review-item">
-                                    <strong><?php echo htmlspecialchars($r['title']); ?></strong>
-                                    <span class="rating">Rating: <?php echo $r['rating']; ?>/5</span>
-                                    <p><?php echo nl2br(htmlspecialchars($r['review'])); ?></p>
-                                    <span class="review-date"><?php echo date('F j, Y', strtotime($r['review_date'])); ?></span>
-                                </div>
-                            <?php endwhile; ?>
-                        </div>
-                    <?php else: ?>
-                        <p>No reviews found.</p>
-                    <?php endif; ?>
+                <div class="grid gap-8">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/30">
+                        <h3 class="text-2xl font-bold text-[#1f2937] mb-6 border-b border-[#e0e7ff] pb-2">Borrowing History</h3>
+                        <?php if ($history && $history->num_rows > 0): ?>
+                            <ul class="space-y-4">
+                                <?php while($h = $history->fetch_assoc()): ?>
+                                    <li class="p-4 bg-white/50 rounded-xl border border-gray-100 hover:border-[#4f46e5]/20 transition-all duration-300">
+                                        <div class="font-semibold text-[#1f2937]"><?php echo htmlspecialchars($h['title']); ?></div>
+                                        <div class="text-[#6b7280]">by <?php echo htmlspecialchars($h['author']); ?></div>
+                                        <div class="text-sm text-[#4f46e5] mt-2">
+                                            Borrowed: <?php echo date('F j, Y', strtotime($h['borrow_date'])); ?>
+                                            <?php if ($h['return_date']): ?>
+                                                <span class="text-[#10b981]">• Returned: <?php echo date('F j, Y', strtotime($h['return_date'])); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </li>
+                                <?php endwhile; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="flex flex-col items-center justify-center py-12">
+                                <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="20" y="40" width="30" height="70" rx="6" fill="#4f46e5"/>
+                                    <rect x="50" y="30" width="30" height="80" rx="6" fill="#0ea5e9"/>
+                                    <rect x="80" y="50" width="30" height="60" rx="6" fill="#a5b4fc"/>
+                                    <rect x="35" y="60" width="70" height="10" rx="3" fill="#10b981"/>
+                                    <rect x="35" y="80" width="70" height="10" rx="3" fill="#6b7280"/>
+                                    <rect x="35" y="100" width="70" height="10" rx="3" fill="#e0e7ff"/>
+                                    <rect x="35" y="120" width="70" height="6" rx="3" fill="#1f2937"/>
+                                </svg>
+                                <p class="mt-6 text-lg text-[#6b7280]">No borrowing history found.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/30">
+                        <h3 class="text-2xl font-bold text-[#1f2937] mb-6 border-b border-[#e0e7ff] pb-2">Wishlist</h3>
+                        <?php if ($wishlist && $wishlist->num_rows > 0): ?>
+                            <ul class="space-y-4">
+                                <?php while($w = $wishlist->fetch_assoc()): ?>
+                                    <li class="p-4 bg-white/50 rounded-xl border border-gray-100 hover:border-[#4f46e5]/20 transition-all duration-300">
+                                        <div class="font-semibold text-[#1f2937]"><?php echo htmlspecialchars($w['title']); ?></div>
+                                        <div class="text-[#6b7280]">by <?php echo htmlspecialchars($w['author']); ?></div>
+                                    </li>
+                                <?php endwhile; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="flex flex-col items-center justify-center py-12">
+                                <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="20" y="40" width="30" height="70" rx="6" fill="#4f46e5"/>
+                                    <rect x="50" y="30" width="30" height="80" rx="6" fill="#0ea5e9"/>
+                                    <rect x="80" y="50" width="30" height="60" rx="6" fill="#a5b4fc"/>
+                                    <rect x="35" y="60" width="70" height="10" rx="3" fill="#10b981"/>
+                                    <rect x="35" y="80" width="70" height="10" rx="3" fill="#6b7280"/>
+                                    <rect x="35" y="100" width="70" height="10" rx="3" fill="#e0e7ff"/>
+                                    <rect x="35" y="120" width="70" height="6" rx="3" fill="#1f2937"/>
+                                </svg>
+                                <p class="mt-6 text-lg text-[#6b7280]">No wishlist items found.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/30">
+                        <h3 class="text-2xl font-bold text-[#1f2937] mb-6 border-b border-[#e0e7ff] pb-2">Reviews</h3>
+                        <?php if ($reviews && $reviews->num_rows > 0): ?>
+                            <div class="space-y-6">
+                                <?php while($r = $reviews->fetch_assoc()): ?>
+                                    <div class="p-6 bg-white/50 rounded-xl border border-gray-100 hover:border-[#4f46e5]/20 transition-all duration-300">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <div class="font-semibold text-[#1f2937]"><?php echo htmlspecialchars($r['title']); ?></div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-[#f59e0b] font-bold"><?php echo $r['rating']; ?>/5</span>
+                                                <span class="text-[#6b7280] text-sm"><?php echo date('F j, Y', strtotime($r['review_date'])); ?></span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[#4b5563] leading-relaxed"><?php echo nl2br(htmlspecialchars($r['review'])); ?></p>
+                                    </div>
+                                <?php endwhile; ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="flex flex-col items-center justify-center py-12">
+                                <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="20" y="40" width="30" height="70" rx="6" fill="#4f46e5"/>
+                                    <rect x="50" y="30" width="30" height="80" rx="6" fill="#0ea5e9"/>
+                                    <rect x="80" y="50" width="30" height="60" rx="6" fill="#a5b4fc"/>
+                                    <rect x="35" y="60" width="70" height="10" rx="3" fill="#10b981"/>
+                                    <rect x="35" y="80" width="70" height="10" rx="3" fill="#6b7280"/>
+                                    <rect x="35" y="100" width="70" height="10" rx="3" fill="#e0e7ff"/>
+                                    <rect x="35" y="120" width="70" height="6" rx="3" fill="#1f2937"/>
+                                </svg>
+                                <p class="mt-6 text-lg text-[#6b7280]">No reviews found.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endif; ?>
         </main>
     </div>
+    <script src="script.js"></script>
 </body>
 </html> 
