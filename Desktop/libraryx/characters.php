@@ -32,22 +32,7 @@
     <div class="floating-shape floating-shape2"></div>
     <div class="floating-shape floating-shape3"></div>
     <div class="max-w-5xl mx-auto px-4 py-6 relative z-10">
-        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
-            <div class="flex items-center gap-4">
-                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
-                <div>
-                  <h1 class="text-3xl font-extrabold text-primary tracking-tight font-poppins">LibraryX</h1>
-                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="index.php" class="text-lg font-medium text-gray-700 hover:text-primary">Home</a>
-                <a href="borrowed.php" class="text-lg font-medium text-gray-700 hover:text-primary">Borrowed Books</a>
-                <a href="history.php" class="text-lg font-medium text-gray-700 hover:text-primary">Borrowing History</a>
-                <a href="wishlist.php" class="text-lg font-medium text-gray-700 hover:text-primary">Wishlist</a>
-                <a href="characters.php" class="text-lg font-semibold text-[#4f46e5] border-b-2 border-[#4f46e5] pb-1">Characters</a>
-            </div>
-        </nav>
+        <?php include 'navbar.php'; ?>
         <main x-data="characterGrid()">
             <section class="mb-12 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Who Do You Feel Like Today?</h2>

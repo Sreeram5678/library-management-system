@@ -1,10 +1,11 @@
 <?php
+session_start();
 require_once 'config.php';
 
 // Handle adding to wishlist
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_wishlist'])) {
     $book_id = $_POST['book_id'];
-    $borrower_name = $_POST['borrower_name'];
+    $borrower_name = $_SESSION['full_name'];
     
     $sql = "INSERT INTO wishlist (book_id, borrower_name) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_wishlist'
 }
 
 // Get wishlist items
-$sql = "SELECT w.*, b.title, b.author, b.isbn, b.status, c.name as category, b.type 
+$sql = "SELECT w.*, b.title, b.author, b.isbn, b.status, c.name as category, b.type, b.available_copies, b.copies 
         FROM wishlist w 
         JOIN books b ON w.book_id = b.id 
         JOIN categories c ON b.category_id = c.id 
@@ -36,6 +37,23 @@ $type_icons = [
     'magazine' => '🗞️ Magazine',
     'research_paper' => '📄 Research'
 ];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['borrow_book'])) {
+    $book_id = $_POST['book_id'];
+    $borrower_name = $_SESSION['full_name'];
+    $due_date = date('Y-m-d H:i:s', strtotime('+7 days'));
+}
+
+// Fetch borrowing history for this user
+$history_sql = "SELECT b.title, b.author, bb.borrow_date, bb.due_date, bb.return_date
+                FROM borrowed_books bb
+                JOIN books b ON bb.book_id = b.id
+                WHERE bb.borrower_name = ?
+                ORDER BY bb.borrow_date DESC";
+$history_stmt = $conn->prepare($history_sql);
+$history_stmt->bind_param("s", $_SESSION['full_name']);
+$history_stmt->execute();
+$history_result = $history_stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +78,7 @@ $type_icons = [
         opacity: 0.10;
         filter: blur(12px);
         pointer-events: none;
-      }
+        }
       .floating-shape1 { top: 5%; left: 10%; width: 220px; height: 220px; background: #4f46e5; border-radius: 50%; }
       .floating-shape2 { bottom: 10%; right: 8%; width: 180px; height: 180px; background: #0ea5e9; border-radius: 50%; }
       .floating-shape3 { top: 60%; left: 60%; width: 120px; height: 120px; background: #a5b4fc; border-radius: 50%; }
@@ -71,22 +89,7 @@ $type_icons = [
     <div class="floating-shape floating-shape2"></div>
     <div class="floating-shape floating-shape3"></div>
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
-        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
-            <div class="flex items-center gap-4">
-                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
-                <div>
-                  <h1 class="text-3xl font-extrabold text-[#4f46e5] tracking-tight font-poppins">LibraryX</h1>
-                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="index.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Home</a>
-                <a href="borrowed.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowed Books</a>
-                <a href="history.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowing History</a>
-                <a href="wishlist.php" class="text-lg font-semibold text-[#4f46e5] border-b-2 border-[#4f46e5] pb-1">Wishlist</a>
-                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
-            </div>
-        </nav>
+        <?php include 'navbar.php'; ?>
         <main>
             <h2 class="text-2xl md:text-3xl font-bold text-[#1f2937] mb-6 border-b border-[#e0e7ff] pb-2 drop-shadow-lg">My Wishlist</h2>
             <?php if ($result->num_rows > 0): ?>
@@ -106,13 +109,13 @@ $type_icons = [
                                 <p class="italic text-[#6b7280] mb-1">by <?php echo htmlspecialchars($row['author']); ?></p>
                                 <p class="text-[#4f46e5] font-medium mb-1">📚 <?php echo htmlspecialchars($row['category']); ?></p>
                                 <p class="text-[#6b7280] text-sm mb-2">ISBN: <?php echo !empty($row['isbn']) ? htmlspecialchars($row['isbn']) : 'N/A'; ?></p>
+                                <p class="text-[#6b7280] text-sm mb-2">Available copies: <?php echo $row['available_copies']; ?> / <?php echo $row['copies']; ?></p>
                                 <p class="inline-block bg-[#10b981]/10 text-[#10b981] rounded-full px-4 py-1 text-sm font-semibold mb-2"><?php echo ucfirst($row['status']); ?></p>
                             </div>
                             <div class="mt-auto flex flex-col gap-2">
                                 <?php if ($row['status'] === 'available'): ?>
                                     <form action="index.php" method="post" class="flex flex-col gap-2">
                                         <input type="hidden" name="book_id" value="<?php echo $row['book_id']; ?>">
-                                        <input type="text" name="borrower_name" placeholder="Your Name" required class="px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-base focus:ring-2 focus:ring-[#4f46e5] outline-none transition" />
                                         <button type="submit" name="borrow_book" class="px-4 py-2 rounded-lg bg-[#4f46e5] text-white font-bold shadow-lg hover:bg-[#0ea5e9] transition flex items-center justify-center gap-2 group focus:ring-2 focus:ring-[#4f46e5]">Borrow Now</button>
                                     </form>
                                 <?php endif; ?>
@@ -138,6 +141,45 @@ $type_icons = [
                   <p class="mt-6 text-lg text-[#6b7280]">Your wishlist is empty.</p>
                 </div>
             <?php endif; ?>
+
+            <!-- Modern Borrowing History Section -->
+            <div class="mt-12 mb-8">
+              <h2 class="text-2xl font-bold text-[#4f46e5] mb-4 flex items-center gap-2"><svg class="w-6 h-6 inline-block text-[#4f46e5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3"/></svg> Borrowing History</h2>
+              <?php if ($history_result->num_rows > 0): ?>
+                <div class="overflow-x-auto">
+                  <table class="min-w-full bg-white rounded-xl shadow-md">
+                    <thead>
+                      <tr class="bg-[#e0e7ff] text-[#4f46e5]">
+                        <th class="py-3 px-4 text-left">Title</th>
+                        <th class="py-3 px-4 text-left">Author</th>
+                        <th class="py-3 px-4 text-left">Borrowed</th>
+                        <th class="py-3 px-4 text-left">Due</th>
+                        <th class="py-3 px-4 text-left">Returned</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php while($h = $history_result->fetch_assoc()): ?>
+                        <tr class="border-b hover:bg-[#f8fafc] transition">
+                          <td class="py-2 px-4 font-semibold"><?php echo htmlspecialchars($h['title']); ?></td>
+                          <td class="py-2 px-4"><?php echo htmlspecialchars($h['author']); ?></td>
+                          <td class="py-2 px-4"><?php echo date('M d, Y', strtotime($h['borrow_date'])); ?></td>
+                          <td class="py-2 px-4"><?php echo $h['due_date'] ? date('M d, Y', strtotime($h['due_date'])) : '-'; ?></td>
+                          <td class="py-2 px-4">
+                            <?php if ($h['return_date']): ?>
+                              <span class="inline-flex items-center gap-1 text-green-600 font-bold"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> <?php echo date('M d, Y', strtotime($h['return_date'])); ?></span>
+                            <?php else: ?>
+                              <span class="inline-flex items-center gap-1 text-red-500 font-bold"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Not returned</span>
+                            <?php endif; ?>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    </tbody>
+                  </table>
+                </div>
+              <?php else: ?>
+                <div class="text-gray-500 text-center py-8">No borrowing history yet.</div>
+              <?php endif; ?>
+            </div>
         </main>
     </div>
     <script src="script.js"></script>

@@ -1,29 +1,34 @@
 <?php
+session_start();
 require_once 'config.php';
 
 // Handle borrowing
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['borrow_book'])) {
     $book_id = $_POST['book_id'];
-    $borrower_name = $_POST['borrower_name'];
-    $due_date = date('Y-m-d H:i:s', strtotime('+14 days')); // 2 weeks borrowing period
-    
-    // Start transaction
+    $borrower_name = $_SESSION['full_name'];
+    $due_date = date('Y-m-d H:i:s', strtotime('+7 days'));
     $conn->begin_transaction();
-    
     try {
-        // Update book status
-        $sql = "UPDATE books SET status = 'borrowed' WHERE id = ? AND status = 'available'";
+        // Check available copies
+        $sql = "SELECT available_copies FROM books WHERE id = ? FOR UPDATE";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $book_id);
         $stmt->execute();
-        
+        $result = $stmt->get_result();
+        $book = $result->fetch_assoc();
+        if (!$book || $book['available_copies'] <= 0) {
+            throw new Exception("No copies available.");
+        }
+        // Decrement available_copies
+        $sql = "UPDATE books SET available_copies = available_copies - 1, status = IF(available_copies - 1 = 0, 'borrowed', 'available') WHERE id = ? AND available_copies > 0";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $book_id);
+        $stmt->execute();
         if ($stmt->affected_rows > 0) {
-            // Add to borrowed_books
             $sql = "INSERT INTO borrowed_books (book_id, borrower_name, due_date) VALUES (?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("iss", $book_id, $borrower_name, $due_date);
             $stmt->execute();
-            
             $conn->commit();
             $success_message = "Book borrowed successfully!";
         } else {
@@ -38,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['borrow_book'])) {
 // Handle adding to wishlist
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_wishlist'])) {
     $book_id = $_POST['book_id'];
-    $borrower_name = $_POST['borrower_name'];
+    $borrower_name = $_SESSION['full_name'];
     
     $sql = "INSERT INTO wishlist (book_id, borrower_name) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
@@ -51,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_wishlist'])) {
 // Handle notification request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notify_me'])) {
     $book_id = $_POST['book_id'];
-    $notify_name = $_POST['notify_name'];
-    $notify_email = $_POST['notify_email'];
+    $notify_name = $_SESSION['full_name'];
+    $notify_email = $_SESSION['email'];
     $sql = "INSERT INTO notifications (book_id, name, email) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iss", $book_id, $notify_name, $notify_email);
@@ -183,6 +188,62 @@ $type_icons = [
     'magazine' => '🗞️ Magazine',
     'research_paper' => '📄 Research'
 ];
+
+// Personalized Recommendations Carousel
+$recommendations = [];
+if (isset($_SESSION['user_id'])) {
+    // Get categories and authors from user's history and wishlist
+    $user = $_SESSION['full_name'];
+    $cat_sql = "SELECT DISTINCT b.category_id FROM borrowed_books bb JOIN books b ON bb.book_id = b.id WHERE bb.borrower_name = ? UNION SELECT DISTINCT b.category_id FROM wishlist w JOIN books b ON w.book_id = b.id WHERE w.borrower_name = ?";
+    $cat_stmt = $conn->prepare($cat_sql);
+    $cat_stmt->bind_param("ss", $user, $user);
+    $cat_stmt->execute();
+    $cat_res = $cat_stmt->get_result();
+    $categories = [];
+    while ($row = $cat_res->fetch_assoc()) {
+        $categories[] = $row['category_id'];
+    }
+    $auth_sql = "SELECT DISTINCT b.author FROM borrowed_books bb JOIN books b ON bb.book_id = b.id WHERE bb.borrower_name = ? UNION SELECT DISTINCT b.author FROM wishlist w JOIN books b ON w.book_id = b.id WHERE w.borrower_name = ?";
+    $auth_stmt = $conn->prepare($auth_sql);
+    $auth_stmt->bind_param("ss", $user, $user);
+    $auth_stmt->execute();
+    $auth_res = $auth_stmt->get_result();
+    $authors = [];
+    while ($row = $auth_res->fetch_assoc()) {
+        $authors[] = $row['author'];
+    }
+    // Recommend books not already borrowed or wishlisted, matching category or author
+    if ($categories || $authors) {
+        $cat_placeholders = $categories ? implode(',', array_fill(0, count($categories), '?')) : '';
+        $auth_placeholders = $authors ? implode(',', array_fill(0, count($authors), '?')) : '';
+        $params = [];
+        $types = '';
+        $where = [];
+        if ($categories) {
+            $where[] = 'b.category_id IN (' . $cat_placeholders . ')';
+            $params = array_merge($params, $categories);
+            $types .= str_repeat('i', count($categories));
+        }
+        if ($authors) {
+            $where[] = 'b.author IN (' . $auth_placeholders . ')';
+            $params = array_merge($params, $authors);
+            $types .= str_repeat('s', count($authors));
+        }
+        $sql = "SELECT b.*, c.name as category FROM books b JOIN categories c ON b.category_id = c.id WHERE b.status = 'available' AND (" . implode(' OR ', $where) . ") AND b.id NOT IN (SELECT book_id FROM borrowed_books WHERE borrower_name = ? UNION SELECT book_id FROM wishlist WHERE borrower_name = ?) LIMIT 5";
+        $params[] = $user;
+        $params[] = $user;
+        $types .= 'ss';
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $recommendations = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+}
+if (empty($recommendations)) {
+    // Fallback: show 5 most popular available books
+    $sql = "SELECT b.*, c.name as category, COUNT(bb.id) as borrow_count FROM books b JOIN categories c ON b.category_id = c.id LEFT JOIN borrowed_books bb ON b.id = bb.book_id WHERE b.status = 'available' GROUP BY b.id ORDER BY borrow_count DESC, b.id DESC LIMIT 5";
+    $recommendations = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -215,11 +276,11 @@ $type_icons = [
       .floating-shape3 { top: 60%; left: 60%; width: 120px; height: 120px; background: #a5b4fc; border-radius: 50%; }
       #chatbox-collapsed {
         position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: linear-gradient(135deg,#4f46e5,#0ea5e9); border-radius: 50%; box-shadow: 0 2px 12px #0002; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; transition: box-shadow 0.2s;
-      }
+        }
       #chatbox-collapsed:hover { box-shadow: 0 4px 24px #4f46e5aa; }
       #chatbox-expanded {
         position: fixed; bottom: 24px; right: 24px; width: 340px; background: #fff; border-radius: 18px; box-shadow: 0 4px 32px #0003; padding: 0; z-index: 9999; display: flex; flex-direction: column; transition: box-shadow 0.2s, width 0.2s;
-      }
+        }
       #chatbox-header { background: linear-gradient(135deg,#4f46e5,#0ea5e9); color: #fff; border-radius: 18px 18px 0 0; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
       #chatbox-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
       #chatlog { height: 220px; overflow-y: auto; margin: 0 16px 8px 16px; font-size: 15px; }
@@ -233,23 +294,7 @@ $type_icons = [
     <div class="floating-shape floating-shape2"></div>
     <div class="floating-shape floating-shape3"></div>
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
-        <!-- Glassy Navbar with Avatar and Welcome -->
-        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 sticky top-4 z-30 mb-8 border border-white/30">
-            <div class="flex items-center gap-4">
-                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
-                <div>
-                  <h1 class="text-3xl font-extrabold text-primary tracking-tight font-poppins">LibraryX</h1>
-                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="index.php" class="text-lg font-semibold text-primary border-b-2 border-primary pb-1">Home</a>
-                <a href="borrowed.php" class="text-lg font-medium text-gray-700 hover:text-primary">Borrowed Books</a>
-                <a href="history.php" class="text-lg font-medium text-gray-700 hover:text-primary">Borrowing History</a>
-                <a href="wishlist.php" class="text-lg font-medium text-gray-700 hover:text-primary">Wishlist</a>
-                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
-            </div>
-        </nav>
+        <?php include 'navbar.php'; ?>
         <!-- Book Illustration for Fun -->
         <div class="flex justify-center mb-8">
           <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -393,6 +438,7 @@ $type_icons = [
                             <p class="italic text-[#6b7280] mb-1">by <?php echo htmlspecialchars($row['author']); ?></p>
                             <p class="text-[#4f46e5] font-medium mb-1">📚 <?php echo htmlspecialchars($row['category']); ?></p>
                             <p class="text-[#6b7280] text-sm mb-2">ISBN: <?php echo !empty($row['isbn']) ? htmlspecialchars($row['isbn']) : 'N/A'; ?></p>
+                            <p class="text-[#6b7280] text-sm mb-2">Available copies: <?php echo $row['available_copies']; ?> / <?php echo $row['copies']; ?></p>
                             <p class="inline-block bg-[#10b981]/10 text-[#10b981] rounded-full px-4 py-1 text-sm font-semibold mb-2">✔ <?php echo ucfirst($row['status']); ?></p>
                                 <?php
                                     $tag_labels = '';
@@ -409,7 +455,6 @@ $type_icons = [
                                 <?php if ($row['status'] === 'available'): ?>
                                 <form action="" method="post" class="flex flex-col gap-2">
                                         <input type="hidden" name="book_id" value="<?php echo $row['id']; ?>">
-                                    <input type="text" name="borrower_name" placeholder="Your Name" required class="px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-base focus:ring-2 focus:ring-primary outline-none transition" />
                                     <button type="submit" name="borrow_book" class="px-4 py-2 rounded-lg bg-[#4f46e5] text-white font-bold shadow-lg hover:bg-[#0ea5e9] transition flex items-center justify-center gap-2 group focus:ring-2 focus:ring-[#4f46e5]">
                                       <svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5 group-hover:scale-110 transition-transform' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7' /></svg>Borrow
                                     </button>
@@ -448,6 +493,31 @@ $type_icons = [
                     <?php endfor; ?>
                 </div>
             <?php endif; ?>
+        <!-- Personalized Recommendations Carousel -->
+        <div class="my-10">
+          <h2 class="text-2xl font-bold text-[#4f46e5] mb-4">Recommended for You</h2>
+          <div class="relative" x-data="{ scroll: 0 }">
+            <button @click="scroll -= 320" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 rounded-full shadow p-2 hover:bg-[#e0e7ff] transition hidden md:block"><svg class="w-6 h-6 text-[#4f46e5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button>
+            <div class="overflow-x-auto no-scrollbar">
+              <div class="flex gap-6 transition-transform duration-300" :style="'transform: translateX(' + scroll + 'px)'">
+                <?php foreach ($recommendations as $rec): ?>
+                  <div class="min-w-[280px] max-w-xs bg-white rounded-2xl shadow-xl p-6 flex flex-col items-start hover:shadow-2xl transition">
+                    <span class="inline-block mb-2 px-3 py-1 rounded-full text-xs font-bold bg-[#e0e7ff] text-[#4f46e5]">Book</span>
+                    <h3 class="text-lg font-bold text-[#1f2937] mb-1"><?php echo htmlspecialchars($rec['title']); ?></h3>
+                    <p class="italic text-[#6b7280] mb-1">by <?php echo htmlspecialchars($rec['author']); ?></p>
+                    <p class="text-[#4f46e5] font-medium mb-2">📚 <?php echo htmlspecialchars($rec['category']); ?></p>
+                    <form action="index.php" method="post" class="w-full flex gap-2 mt-2">
+                      <input type="hidden" name="book_id" value="<?php echo $rec['id']; ?>">
+                      <button type="submit" name="borrow_book" class="flex-1 px-4 py-2 rounded-lg bg-[#4f46e5] text-white font-bold shadow hover:bg-[#0ea5e9] transition">Borrow</button>
+                      <button type="submit" name="add_to_wishlist" class="flex-1 px-4 py-2 rounded-lg bg-[#0ea5e9] text-white font-bold shadow hover:bg-[#4f46e5] transition">Wishlist</button>
+                    </form>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+            <button @click="scroll += 320" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 rounded-full shadow p-2 hover:bg-[#e0e7ff] transition hidden md:block"><svg class="w-6 h-6 text-[#4f46e5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></button>
+          </div>
+        </div>
     </div>
     <!-- Borrow Roulette Modal -->
     <div x-data="borrowRoulette()" x-show="open" @open-roulette.window="openRoulette()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" x-cloak>
@@ -684,7 +754,7 @@ $type_icons = [
       .then(data => {
         chatlog.innerHTML += "<div><b>Bot:</b> " + data.reply + "</div>";
         chatlog.scrollTop = chatlog.scrollHeight;
-      });
+    });
     }
     </script>
 </body>

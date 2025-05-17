@@ -50,22 +50,7 @@ $type_icons = [
     <div class="floating-shape floating-shape2"></div>
     <div class="floating-shape floating-shape3"></div>
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
-        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
-            <div class="flex items-center gap-4">
-                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
-                <div>
-                  <h1 class="text-3xl font-extrabold text-[#4f46e5] tracking-tight font-poppins">LibraryX</h1>
-                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="index.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Home</a>
-                <a href="borrowed.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowed Books</a>
-                <a href="history.php" class="text-lg font-semibold text-[#4f46e5] border-b-2 border-[#4f46e5] pb-1">Borrowing History</a>
-                <a href="wishlist.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Wishlist</a>
-                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
-            </div>
-        </nav>
+        <?php include 'navbar.php'; ?>
         <main>
             <h2 class="text-2xl md:text-3xl font-bold text-[#1f2937] mb-6 border-b border-[#e0e7ff] pb-2 drop-shadow-lg">Borrowing History</h2>
             <?php if ($result->num_rows > 0): ?>

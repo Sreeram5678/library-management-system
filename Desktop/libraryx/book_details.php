@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reviewer_name'], $_PO
         min-height: 100vh;
         position: relative;
         overflow-x: hidden;
-      }
+        }
       .floating-shape {
         position: absolute;
         z-index: 0;
@@ -83,22 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reviewer_name'], $_PO
     <div class="floating-shape floating-shape2"></div>
     <div class="floating-shape floating-shape3"></div>
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
-        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
-            <div class="flex items-center gap-4">
-                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
-                <div>
-                  <h1 class="text-3xl font-extrabold text-[#4f46e5] tracking-tight font-poppins">LibraryX</h1>
-                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="index.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Home</a>
-                <a href="borrowed.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowed Books</a>
-                <a href="history.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowing History</a>
-                <a href="wishlist.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Wishlist</a>
-                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
-            </div>
-        </nav>
+        <?php include 'navbar.php'; ?>
         <main>
             <div class="bg-white rounded-2xl shadow-2xl p-8 flex flex-col md:flex-row gap-8 mb-8">
                 <div class="flex-1">
@@ -106,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reviewer_name'], $_PO
                     <p class="text-[#6b7280] mb-1"><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
                     <p class="text-[#6b7280] mb-1"><strong>Category:</strong> <?php echo htmlspecialchars($book['category']); ?></p>
                     <p class="text-[#6b7280] mb-1"><strong>ISBN:</strong> <?php echo !empty($book['isbn']) ? htmlspecialchars($book['isbn']) : 'N/A'; ?></p>
+                    <p class="text-[#6b7280] mb-1"><strong>Available Copies:</strong> <?php echo $book['available_copies']; ?> / <?php echo $book['copies']; ?></p>
                     <p class="text-[#6b7280] mb-1"><strong>Description:</strong> <?php echo htmlspecialchars($book['description']); ?></p>
                     <p class="text-[#6b7280] mb-1"><strong>Status:</strong> <span class="inline-block bg-[#10b981]/10 text-[#10b981] rounded-full px-4 py-1 text-sm font-semibold"><?php echo ucfirst($book['status']); ?></span></p>
                 </div>

@@ -37,8 +37,8 @@ try {
         throw new Exception('Book is not currently borrowed');
     }
 
-    // Update book status
-    $stmt = $conn->prepare("UPDATE books SET status = 'available' WHERE id = ?");
+    // Update book status and available_copies
+    $stmt = $conn->prepare("UPDATE books SET available_copies = available_copies + 1, status = IF(available_copies + 1 > 0, 'available', status) WHERE id = ?");
     $stmt->bind_param("i", $book_id);
     $stmt->execute();
 

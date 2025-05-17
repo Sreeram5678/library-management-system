@@ -1,16 +1,27 @@
 <?php
+session_start();
 require_once 'config.php';
 
-// Get only currently borrowed books (where return_date is NULL)
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$user_name = $_SESSION['full_name'];
+
+// Get only currently borrowed books for this user (where return_date is NULL)
 $sql = "SELECT b.*, c.name as category_name, bb.borrow_date, bb.borrower_name, bb.due_date,
         DATEDIFF(CURRENT_DATE, bb.due_date) as days_overdue
     FROM books b 
     LEFT JOIN categories c ON b.category_id = c.id 
     JOIN borrowed_books bb ON b.id = bb.book_id 
-    WHERE b.status = 'borrowed' 
+    WHERE bb.borrower_name = ? 
     AND bb.return_date IS NULL
     ORDER BY bb.due_date ASC";
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $user_name);
+$stmt->execute();
+$result = $stmt->get_result();
 $borrowed_books = [];
 $overdue_count = 0;
 if ($result && $result->num_rows > 0) {
@@ -45,14 +56,14 @@ $type_icons = [
         min-height: 100vh;
         position: relative;
         overflow-x: hidden;
-      }
+        }
       .floating-shape {
         position: absolute;
         z-index: 0;
         opacity: 0.10;
         filter: blur(12px);
         pointer-events: none;
-      }
+        }
       .floating-shape1 { top: 5%; left: 10%; width: 220px; height: 220px; background: #4f46e5; border-radius: 50%; }
       .floating-shape2 { bottom: 10%; right: 8%; width: 180px; height: 180px; background: #0ea5e9; border-radius: 50%; }
       .floating-shape3 { top: 60%; left: 60%; width: 120px; height: 120px; background: #a5b4fc; border-radius: 50%; }
@@ -63,27 +74,7 @@ $type_icons = [
     <div class="floating-shape floating-shape2"></div>
     <div class="floating-shape floating-shape3"></div>
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
-        <nav class="flex items-center justify-between px-6 py-4 rounded-2xl shadow-glass bg-white/60 backdrop-blur-md sticky top-4 z-30 mb-8 border border-white/30">
-            <div class="flex items-center gap-4">
-                <img src='https://api.dicebear.com/7.x/identicon/svg?seed=LibraryX' alt='avatar' class='w-12 h-12 rounded-full shadow border-2 border-primary/40'>
-                <div>
-                  <h1 class="text-3xl font-extrabold text-[#4f46e5] tracking-tight font-poppins">LibraryX</h1>
-                  <div class="text-xs text-gray-500 font-semibold mt-1">Welcome, Guest!</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="index.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Home</a>
-                <a href="borrowed.php" class="text-lg font-semibold text-[#4f46e5] border-b-2 border-[#4f46e5] pb-1">
-                    Borrowed Books
-                    <?php if ($overdue_count > 0): ?>
-                        <span class="ml-2 inline-block bg-[#e11d48] text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse"><?php echo $overdue_count; ?> overdue</span>
-                    <?php endif; ?>
-                </a>
-                <a href="history.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Borrowing History</a>
-                <a href="wishlist.php" class="text-lg font-medium text-[#1f2937] hover:text-[#4f46e5]">Wishlist</a>
-                <a href="characters.php" class="text-lg font-medium text-gray-700 hover:text-primary">Characters</a>
-            </div>
-        </nav>
+        <?php include 'navbar.php'; ?>
         <main>
             <h2 class="text-2xl md:text-3xl font-bold text-[#1f2937] mb-6 border-b border-[#e0e7ff] pb-2 drop-shadow-lg">Borrowed Books</h2>
             <?php if ($overdue_count > 0): ?>

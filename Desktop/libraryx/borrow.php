@@ -34,7 +34,7 @@ try {
     $conn->begin_transaction();
 
     // Check if book is available
-    $stmt = $conn->prepare("SELECT status, title FROM books WHERE id = ?");
+    $stmt = $conn->prepare("SELECT available_copies, status, title FROM books WHERE id = ? FOR UPDATE");
     $stmt->bind_param("i", $book_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -44,18 +44,21 @@ try {
         throw new Exception('Book not found');
     }
 
-    if ($book['status'] !== 'available') {
-        throw new Exception('Book is not available for borrowing');
+    if ($book['available_copies'] <= 0) {
+        throw new Exception('No copies available for borrowing');
     }
 
-    // Update book status
-    $stmt = $conn->prepare("UPDATE books SET status = 'borrowed' WHERE id = ?");
+    // Decrement available_copies
+    $stmt = $conn->prepare("UPDATE books SET available_copies = available_copies - 1, status = IF(available_copies - 1 = 0, 'borrowed', 'available') WHERE id = ? AND available_copies > 0");
     $stmt->bind_param("i", $book_id);
     $stmt->execute();
 
-    // Create borrow record
-    $stmt = $conn->prepare("INSERT INTO borrowed_books (book_id, borrower_name) VALUES (?, ?)");
-    $stmt->bind_param("is", $book_id, $borrower_name);
+    // Calculate due date (7 days from now)
+    $due_date = date('Y-m-d H:i:s', strtotime('+7 days'));
+
+    // Create borrow record with due_date
+    $stmt = $conn->prepare("INSERT INTO borrowed_books (book_id, borrower_name, due_date) VALUES (?, ?, ?)");
+    $stmt->bind_param("iss", $book_id, $borrower_name, $due_date);
     $stmt->execute();
 
     // Commit transaction
