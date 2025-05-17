@@ -1,0 +1,507 @@
+! version = 2.0
+
+// ---------------------------
+// GREETINGS & BASIC FLOW
+// ---------------------------
++ hello
+- Hello! How can I help you at LibraryX today?
+
++ hi
+- Hello! How can I help you at LibraryX today?
+
++ hey
+- Hello! How can I help you at LibraryX today?
+
++ greetings
+- Hello! How can I help you at LibraryX today?
+
++ good morning
+- Hello! How can I help you at LibraryX today?
+
++ good afternoon
+- Hello! How can I help you at LibraryX today?
+
++ good evening
+- Hello! How can I help you at LibraryX today?
+
++ who are you
+- I'm your friendly assistant at LibraryX! I can help with book suggestions, borrowing info, account questions, and more.
+
++ what are you
+- I'm your friendly assistant at LibraryX! I can help with book suggestions, borrowing info, account questions, and more.
+
++ what is your name
+- I'm your friendly assistant at LibraryX! I can help with book suggestions, borrowing info, account questions, and more.
+
++ how are you
+- I'm doing great! Thanks for asking. Ready to help you find your next favorite book!
+
++ hows it going
+- I'm doing great! Thanks for asking. Ready to help you find your next favorite book!
+
++ how are you doing
+- I'm doing great! Thanks for asking. Ready to help you find your next favorite book!
+
++ bye
+- Goodbye! Happy reading!
+
++ goodbye
+- Goodbye! Happy reading!
+
++ see you
+- Goodbye! Happy reading!
+
++ see you later
+- Goodbye! Happy reading!
+
++ take care
+- Goodbye! Happy reading!
+
+// ---------------------------
+// LIBRARY HOURS
+// ---------------------------
++ opening hours
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ what are the library hours
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ library timings
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ when does the library open
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ hours
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ when is the library open
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ what time does the library open
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ when does the library close
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
++ what time does the library close
+- The library is open from 9 AM to 6 PM, Monday to Saturday.
+
+// ---------------------------
+// BORROWING BOOKS
+// ---------------------------
++ borrow
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ how can i borrow
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ how do i borrow a book
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ i want to borrow a book
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ borrowing process
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ how to borrow
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ can i borrow
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ borrow a book
+- You can borrow any available book by clicking the Borrow button next to it in the catalog.
+
++ how many books can i borrow
+- You can borrow up to 3 books at a time.
+
++ borrowing limit
+- You can borrow up to 3 books at a time.
+
++ book limit
+- You can borrow up to 3 books at a time.
+
++ maximum books
+- You can borrow up to 3 books at a time.
+
++ how long can i keep a book
+- You can keep books for 14 days. You can extend once if no one else has reserved it.
+
++ borrowing period
+- You can keep books for 14 days. You can extend once if no one else has reserved it.
+
++ return period
+- You can keep books for 14 days. You can extend once if no one else has reserved it.
+
++ book duration
+- You can keep books for 14 days. You can extend once if no one else has reserved it.
+
++ extend
+- You can extend your book by clicking the Extend button in your dashboard.
+
++ extend book
+- You can extend your book by clicking the Extend button in your dashboard.
+
++ extend borrowing
+- You can extend your book by clicking the Extend button in your dashboard.
+
++ renew book
+- You can extend your book by clicking the Extend button in your dashboard.
+
+// ---------------------------
+// BOOK SUGGESTIONS
+// ---------------------------
++ suggest me a book
+- Sure! What genre are you in the mood for?
+
++ recommend a book
+- Sure! What genre are you in the mood for?
+
++ can you recommend something
+- Sure! What genre are you in the mood for?
+
++ book suggestion
+- Sure! What genre are you in the mood for?
+
++ what should i read
+- Sure! What genre are you in the mood for?
+
++ need a book
+- Sure! What genre are you in the mood for?
+
++ looking for a book
+- Sure! What genre are you in the mood for?
+
++ fiction
+- Here are some great fiction books:
+- The Alchemist by Paulo Coelho
+- To Kill a Mockingbird by Harper Lee
+- 1984 by George Orwell
+
++ novel
+- Here are some great fiction books:
+- The Alchemist by Paulo Coelho
+- To Kill a Mockingbird by Harper Lee
+- 1984 by George Orwell
+
++ story
+- Here are some great fiction books:
+- The Alchemist by Paulo Coelho
+- To Kill a Mockingbird by Harper Lee
+- 1984 by George Orwell
+
++ mystery
+- Try these exciting mysteries:
+- Sherlock Holmes by Arthur Conan Doyle
+- Gone Girl by Gillian Flynn
+- The Da Vinci Code by Dan Brown
+
++ thriller
+- Try these exciting mysteries:
+- Sherlock Holmes by Arthur Conan Doyle
+- Gone Girl by Gillian Flynn
+- The Da Vinci Code by Dan Brown
+
++ suspense
+- Try these exciting mysteries:
+- Sherlock Holmes by Arthur Conan Doyle
+- Gone Girl by Gillian Flynn
+- The Da Vinci Code by Dan Brown
+
++ science
+- Check out these fascinating science books:
+- A Brief History of Time by Stephen Hawking
+- The Selfish Gene by Richard Dawkins
+- Sapiens by Yuval Noah Harari
+
++ technology
+- Check out these fascinating science books:
+- A Brief History of Time by Stephen Hawking
+- The Selfish Gene by Richard Dawkins
+- Sapiens by Yuval Noah Harari
+
++ non fiction
+- Check out these fascinating science books:
+- A Brief History of Time by Stephen Hawking
+- The Selfish Gene by Richard Dawkins
+- Sapiens by Yuval Noah Harari
+
++ self help
+- You might like these inspiring books:
+- Atomic Habits by James Clear
+- The Power of Now by Eckhart Tolle
+- Think and Grow Rich by Napoleon Hill
+
++ motivation
+- You might like these inspiring books:
+- Atomic Habits by James Clear
+- The Power of Now by Eckhart Tolle
+- Think and Grow Rich by Napoleon Hill
+
++ personal development
+- You might like these inspiring books:
+- Atomic Habits by James Clear
+- The Power of Now by Eckhart Tolle
+- Think and Grow Rich by Napoleon Hill
+
+// ---------------------------
+// NEW & POPULAR BOOKS
+// ---------------------------
++ new books
+- Here are our latest arrivals:
+- Ikigai
+- Sapiens
+- The Psychology of Money
+- Rich Dad Poor Dad
+
++ latest books
+- Here are our latest arrivals:
+- Ikigai
+- Sapiens
+- The Psychology of Money
+- Rich Dad Poor Dad
+
++ new arrivals
+- Here are our latest arrivals:
+- Ikigai
+- Sapiens
+- The Psychology of Money
+- Rich Dad Poor Dad
+
++ whats new
+- Here are our latest arrivals:
+- Ikigai
+- Sapiens
+- The Psychology of Money
+- Rich Dad Poor Dad
+
++ recent books
+- Here are our latest arrivals:
+- Ikigai
+- Sapiens
+- The Psychology of Money
+- Rich Dad Poor Dad
+
++ new releases
+- Here are our latest arrivals:
+- Ikigai
+- Sapiens
+- The Psychology of Money
+- Rich Dad Poor Dad
+
++ popular books
+- Our current bestsellers are:
+- The Midnight Library
+- Project Hail Mary
+- Klara and the Sun
+- The Four Winds
+
++ bestsellers
+- Our current bestsellers are:
+- The Midnight Library
+- Project Hail Mary
+- Klara and the Sun
+- The Four Winds
+
++ trending books
+- Our current bestsellers are:
+- The Midnight Library
+- Project Hail Mary
+- Klara and the Sun
+- The Four Winds
+
++ most read
+- Our current bestsellers are:
+- The Midnight Library
+- Project Hail Mary
+- Klara and the Sun
+- The Four Winds
+
+// ---------------------------
+// USER ACCOUNT
+// ---------------------------
++ my account
+- You can view your account and borrowed books by logging in and visiting your dashboard.
+
++ user account
+- You can view your account and borrowed books by logging in and visiting your dashboard.
+
++ view my books
+- You can view your account and borrowed books by logging in and visiting your dashboard.
+
++ what have i borrowed
+- You can view your account and borrowed books by logging in and visiting your dashboard.
+
++ borrowed books
+- You can view your account and borrowed books by logging in and visiting your dashboard.
+
++ my books
+- You can view your account and borrowed books by logging in and visiting your dashboard.
+
++ login
+- Click the Login button at the top right. Use your registered email and password.
+
++ sign in
+- Click the Login button at the top right. Use your registered email and password.
+
++ log in
+- Click the Login button at the top right. Use your registered email and password.
+
++ sign up
+- Click Sign Up, fill out the form, and you're ready to go!
+
++ register
+- Click Sign Up, fill out the form, and you're ready to go!
+
++ create account
+- Click Sign Up, fill out the form, and you're ready to go!
+
++ forgot password
+- Click Forgot Password on the login page to reset it.
+
++ reset password
+- Click Forgot Password on the login page to reset it.
+
++ change password
+- Click Forgot Password on the login page to reset it.
+
+// ---------------------------
+// RULES & GUIDELINES
+// ---------------------------
++ rules
+- You can borrow up to 3 books at a time.
+- Return them within 14 days.
+- Late returns may result in a small fee.
+
++ borrowing rules
+- You can borrow up to 3 books at a time.
+- Return them within 14 days.
+- Late returns may result in a small fee.
+
++ library rules
+- You can borrow up to 3 books at a time.
+- Return them within 14 days.
+- Late returns may result in a small fee.
+
++ guidelines
+- You can borrow up to 3 books at a time.
+- Return them within 14 days.
+- Late returns may result in a small fee.
+
++ policies
+- You can borrow up to 3 books at a time.
+- Return them within 14 days.
+- Late returns may result in a small fee.
+
++ fine
+- Late return fees are 5 per day after the due date.
+
++ late fee
+- Late return fees are 5 per day after the due date.
+
++ penalty
+- Late return fees are 5 per day after the due date.
+
++ return
+- Go to your dashboard and click Return next to the book you want to return.
+
++ how to return
+- Go to your dashboard and click Return next to the book you want to return.
+
++ return book
+- Go to your dashboard and click Return next to the book you want to return.
+
+// ---------------------------
+// SEARCH & DISCOVERY
+// ---------------------------
++ search
+- You can search by:
+- Title
+- Author
+- Genre
+- Keyword
+- Use the search bar at the top!
+
++ find book
+- You can search by:
+- Title
+- Author
+- Genre
+- Keyword
+- Use the search bar at the top!
+
++ look for
+- You can search by:
+- Title
+- Author
+- Genre
+- Keyword
+- Use the search bar at the top!
+
++ filter
+- You can filter books by:
+- Genre
+- Availability
+- Rating
+- Publication date
+
++ sort
+- You can filter books by:
+- Genre
+- Availability
+- Rating
+- Publication date
+
++ organize
+- You can filter books by:
+- Genre
+- Availability
+- Rating
+- Publication date
+
+// ---------------------------
+// FUN & EASTER EGGS
+// ---------------------------
++ tell me a joke
+- Why did the librarian get kicked off the plane?
+- Because it was overbooked!
+
++ joke
+- Why did the librarian get kicked off the plane?
+- Because it was overbooked!
+
++ make me laugh
+- Why did the librarian get kicked off the plane?
+- Because it was overbooked!
+
++ inspire me
+- The man who does not read has no advantage over the man who cannot read. — Mark Twain
+
++ motivation
+- The man who does not read has no advantage over the man who cannot read. — Mark Twain
+
++ quote
+- The man who does not read has no advantage over the man who cannot read. — Mark Twain
+
++ fun fact
+- Did you know? The first library was built in 2600 BC in ancient Sumer!
+
++ interesting fact
+- Did you know? The first library was built in 2600 BC in ancient Sumer!
+
++ did you know
+- Did you know? The first library was built in 2600 BC in ancient Sumer!
+
+// ---------------------------
+// UNKNOWN CATCH-ALL
+// ---------------------------
++ *
+- I didnt quite get that. You can ask me things like:
+- Suggest me a book
+- What are the library hours?
+- How to borrow a book
+- My account
+- Search for a book
+- Library rules
